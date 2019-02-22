@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Core.API.Data;
 using Core.API.Dtos;
 using Core.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Core.API.Controllers
 {
     [Route("api/[controller]")]
+    [AllowAnonymous]
     [ApiController]
     public class AuthController : ControllerBase
     {
