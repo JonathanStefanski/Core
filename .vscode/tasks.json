@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Project",
+            "dependsOn": [
+                "Run Core",
+                "Run NG"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run NG",
+            "type": "shell",
+            "command": "cd .\\Core-SPA\\ | ng serve -o",
+            "group": "test"
+        },
+        {
+            "label": "Run Core",
+            "type": "shell",
+            "command": "cd .\\Core.API\\ | dotnet watch run",
+            "group": "test"
+        }
+    ]
+}
