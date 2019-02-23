@@ -44,8 +44,9 @@ namespace Core.API
             services.AddScoped<IAuthRepository, AuthRepository>();
 
             // JWT Token Authentication
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-                options.TokenValidationParameters = new TokenValidationParameters 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
@@ -65,12 +66,15 @@ namespace Core.API
             else
             {
                 /* Set up Global Exception Handling */
-                app.UseExceptionHandler(builder => {
-                    builder.Run(async context => {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async context =>
+                    {
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                         var error = context.Features.Get<IExceptionHandlerFeature>();
-                        if (error != null) {
+                        if (error != null)
+                        {
                             context.Response.AddApplicationError(error.Error.GetBaseException()?.Message);
                             await context.Response.WriteAsync(error.Error.GetBaseException()?.Message);
                         }
