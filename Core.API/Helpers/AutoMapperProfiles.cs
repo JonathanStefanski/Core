@@ -30,6 +30,7 @@ namespace Core.API.Helpers
                 });
                 
             CreateMap<Photo, PhotoDetailsDto>();
+            CreateMap<UserEditDto, User>();
         }
     }
 }
