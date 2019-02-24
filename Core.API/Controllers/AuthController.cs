@@ -27,7 +27,7 @@ namespace Core.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
+        public async Task<IActionResult> Register(UserRegistrationDto registerUserDto)
         {
             // validate request (inferred from ApiController)
 
@@ -47,7 +47,7 @@ namespace Core.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<IActionResult> Login(UserLoginDto loginDto)
         {
             var userFromRepo = await _repo.Login(loginDto.Username.ToLower(), loginDto.Password);
 
