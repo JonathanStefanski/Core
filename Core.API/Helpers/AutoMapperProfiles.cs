@@ -31,6 +31,8 @@ namespace Core.API.Helpers
                 
             CreateMap<Photo, PhotoDetailsDto>();
             CreateMap<UserEditDto, User>();
+            CreateMap<Photo, PhotoReturnDto>();
+            CreateMap<PhotoCreationDto, Photo>();
         }
     }
 }
