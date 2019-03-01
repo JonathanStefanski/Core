@@ -10,8 +10,8 @@
 
   <div *ngIf="registerMode" class="container">
     <div class="row justify-content-center">
-      <div class="col-4">
-        <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+      <div class="col-10">
+        <app-register [validatonMessages]="validationMessages" (cancelRegister)="cancelRegisterMode($event)"></app-register>
       </div>
     </div>
   </div>

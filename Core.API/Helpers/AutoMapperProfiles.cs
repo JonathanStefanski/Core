@@ -33,6 +33,7 @@ namespace Core.API.Helpers
             CreateMap<UserEditDto, User>();
             CreateMap<Photo, PhotoReturnDto>();
             CreateMap<PhotoCreationDto, Photo>();
+            CreateMap<UserRegistrationDto, User>();            
         }
     }
 }

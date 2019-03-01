@@ -1,0 +1,34 @@
+{
+    "username": {
+        "required": "Please enter a name.",
+        "minlength": "Please enter in a name larger than 3 characters.",
+        "isUserNameTaken": "This user name has already been taken."
+    },
+    "password": {
+        "required": "Please enter a password.",
+        "pattern": "Plese enter a strong password. (One capital case character, one lower case and at least one decimal character)"
+    },
+    "confirmPassword": {
+        "matchPasswords": "Passwords do not match."
+    },
+    "email": {
+        "required": "Please enter a valid email address.",
+        "email": "Please enter a valid email address.",
+        "emailOrEmpty": "Please enter a valid email address."
+    },
+    "gender": {
+        "required": "Please select a gender."
+    },
+    "knownAs": {
+        "required": "Please enter a known as."
+    },
+    "dateOfBirth": {
+        "required": "Please enter a date of birth."
+    },
+    "city": {
+        "required": "Please enter a city."
+    },
+    "country": {
+        "required": "Please enter a country."
+    }
+}

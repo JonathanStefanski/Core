@@ -39,14 +39,13 @@ namespace Core.API.Controllers
             if (await _repo.UserExists(registerUserDto.Username))
                 return BadRequest("Username already exists");
 
-            var userToCreate = new User
-            {
-                Username = registerUserDto.Username
-            };
+            var userToCreate = _mapper.Map<User>(registerUserDto);
 
             var createdUser = await _repo.Register(userToCreate, registerUserDto.Password);
 
-            return StatusCode(201);
+            var userToReturn = _mapper.Map<UserDetailsDto>(createdUser);
+
+            return CreatedAtRoute("GetUser", new {controller = "Users", id = createdUser.Id}, userToReturn);
         }
 
         [HttpPost("login")]
