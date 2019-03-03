@@ -27,6 +27,11 @@ namespace Core.API.Data
             _context.Remove(entity);
         }
 
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(u => u.LikerId == userId && u.LikeeId == recipientId);
+        }
+
         public async Task<Photo> GetMainPhotoForUser(int userId)
         {
             var photo = await _context.Photos.Where(u => u.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
@@ -51,10 +56,32 @@ namespace Core.API.Data
 
             users = users.Where(u => u.Id != userParams.UserId);
 
-            var genders = new List<string>{ "male", "female" };
+            if (!userParams.Likers && !userParams.Likees)
+            {
+                var genders = new List<string>{ "male", "female" };
             
-            if (genders.Contains(userParams?.Gender.ToLower()))
-                users = users.Where(u => u.Gender == userParams.Gender);
+                if (genders.Contains(userParams?.Gender.ToLower()))
+                    users = users.Where(u => u.Gender == userParams.Gender);
+            }            
+
+            if (userParams.Likers && userParams.Likees)
+            {
+                var commonLikes = await GetUserLikes(userParams.UserId, userParams.Likers, true);
+                users = users.Where(u => commonLikes.Contains(u.Id));
+            }
+            else
+            {
+                if (userParams.Likers)
+                {
+                    var userLikers = await GetUserLikes(userParams.UserId, userParams.Likers, false);
+                    users = users.Where(u => userLikers.Contains(u.Id));
+                }
+                if (userParams.Likees)
+                {
+                    var userLikees = await GetUserLikes(userParams.UserId, userParams.Likers, false);
+                    users = users.Where(u => userLikees.Contains(u.Id));
+                }                
+            }            
 
             if (userParams.MinAge != 18 || userParams.MaxAge != 99)
             {
@@ -81,6 +108,17 @@ namespace Core.API.Data
             }
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int id, bool likersInclude, bool common)
+        {
+            var user = await _context.Users.Include(x => x.Likers).Include(x => x.Likees).FirstAsync(u => u.Id == id);
+
+            var likers = user.Likers.Where(u => u.LikeeId == id).Select(i => i.LikerId);
+            var likees = user.Likees.Where(u => u.LikerId == id).Select(i => i.LikeeId);
+
+            // return matches, else check for likers or likees include
+            return common ? likers.Intersect(likees) : likersInclude ? likers : likees;
         }
 
         public async Task<bool> SaveAll()

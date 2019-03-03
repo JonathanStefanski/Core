@@ -46,7 +46,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem(`matchesPagination_${this.decodedToken.nameid}`);
     this.decodedToken = null;
     this.currentUser = null;
   }

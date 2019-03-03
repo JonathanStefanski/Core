@@ -52,7 +52,6 @@ export class MemberListComponent implements OnInit {
 
   pageChanged(event: any): void {
     this.pagination.currentPage = event.page;
-    this.storePaginationToLocalStorage();
     this.loadUsers();
   }
 
@@ -64,11 +63,5 @@ export class MemberListComponent implements OnInit {
       }, error => {
         this.alertify.error(error);
       });
-  }
-
-  storePaginationToLocalStorage() {
-    // Set Pagination info in local storage for specific user
-    const id = this.authService.decodedToken.nameid;
-    localStorage.setItem(`matchesPagination_${id}`, JSON.stringify(this.pagination));
   }
 }

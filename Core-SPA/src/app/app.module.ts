@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule } from 'ngx-bootstrap';
 import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from 'ngx-gallery';
 import { FileUploadModule } from 'ng2-file-upload';
@@ -32,6 +32,7 @@ import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { ValidationMessagesResolver } from './_resolvers/validation-messages.resolver';
 import { FileService } from './_services/file.service';
+import { ListsResolver } from './_resolvers/lists.resolver';
 
 
 export function getToken() {
@@ -61,6 +62,7 @@ export function getToken() {
       BsDatepickerModule.forRoot(),
       TabsModule.forRoot(),
       PaginationModule.forRoot(),
+      ButtonsModule.forRoot(),
       RouterModule.forRoot(appRoutes),
       JwtModule.forRoot({
          config: {
@@ -84,7 +86,8 @@ export function getToken() {
       MemberListResolver,
       MemberEditResolver,
       PreventUnsavedChanges,
-      ValidationMessagesResolver
+      ValidationMessagesResolver,
+      ListsResolver
    ],
    bootstrap: [
       AppComponent

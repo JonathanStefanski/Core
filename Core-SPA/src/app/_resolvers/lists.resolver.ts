@@ -9,15 +9,16 @@ import { Pagination } from '../_models/Pagination';
 import { AuthService } from '../_services/auth.service';
 
 @Injectable()
-export class MemberListResolver implements Resolve<User[]> {
+export class ListsResolver implements Resolve<User[]> {
     constructor(private userService: UserService, private router: Router,
                 private alertify: AlertifyService, private authService: AuthService) {}
 
     pageNumber = 1;
     pageSize = 10;
+    likesParam = 'Both';
 
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-        return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
+        return this.userService.getUsers(this.pageNumber, this.pageSize, null, this.likesParam).pipe(
             catchError(error => {
                 this.alertify.error(error);
                 this.router.navigate(['/home']);

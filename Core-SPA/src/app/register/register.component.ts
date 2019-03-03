@@ -35,7 +35,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     },
     this.genericValidator = new GenericValidator(this.validatonMessages);
     this.createForm();
-  }  
+  }
 
   ngAfterViewInit(): void {
     // Watch for the blur event from any input element on the form.
@@ -54,9 +54,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       this.user['password'] = 'password';
 
       console.log(this.user);
-      
+
       this.authService.register(this.user).subscribe(() => {
-        this.alertify.success('registration succesful');        
+        this.alertify.success('registration succesful');
       }, error => {
         this.alertify.error(error);
       }, () => {
