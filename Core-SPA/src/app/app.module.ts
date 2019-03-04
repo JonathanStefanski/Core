@@ -33,6 +33,8 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
 import { ValidationMessagesResolver } from './_resolvers/validation-messages.resolver';
 import { FileService } from './_services/file.service';
 import { ListsResolver } from './_resolvers/lists.resolver';
+import { MessagesResolver } from './_resolvers/messages.resolver';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 
 
 export function getToken() {
@@ -52,7 +54,8 @@ export function getToken() {
       MemberDetailComponent,
       MemberEditComponent,
       PhotoEditorComponent,
-      TimeAgoPipe
+      TimeAgoPipe,
+      MemberMessagesComponent
    ],
    imports: [
       BrowserModule,
@@ -87,7 +90,8 @@ export function getToken() {
       MemberEditResolver,
       PreventUnsavedChanges,
       ValidationMessagesResolver,
-      ListsResolver
+      ListsResolver,
+      MessagesResolver
    ],
    bootstrap: [
       AppComponent

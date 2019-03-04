@@ -33,7 +33,13 @@ namespace Core.API.Helpers
             CreateMap<UserEditDto, User>();
             CreateMap<Photo, PhotoReturnDto>();
             CreateMap<PhotoCreationDto, Photo>();
-            CreateMap<UserRegistrationDto, User>();            
+            CreateMap<UserRegistrationDto, User>(); 
+            CreateMap<MessageCreationDto, Message>().ReverseMap();       
+            CreateMap<Message, MessageDetailDto>()
+                .ForMember(m => m.SenderPhotoUrl, 
+                    opt => opt.MapFrom(u => u.Sender.Photos.FirstOrDefault(ph => ph.IsMain).Url))
+                .ForMember(m => m.RecipientPhotoUrl, 
+                    opt => opt.MapFrom(u => u.Recipient.Photos.FirstOrDefault(ph => ph.IsMain).Url));
         }
     }
 }
