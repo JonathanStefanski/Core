@@ -14,7 +14,6 @@ namespace Core.API.Data
         public DatingRepository(DataContext context)
         {
             this._context = context;
-
         }
 
         public void Add<T>(T entity) where T : class

@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.API.Data;
 using Core.API.Helpers;
+using Core.API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -34,63 +38,22 @@ namespace Core.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Add DbContext
-            services.AddAutoMapper();
-            services.AddDbContext<DataContext>(x => x
-                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-                .ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.IncludeIgnoredWarning)));
-            services.AddTransient<Seed>();
-            services.BuildServiceProvider().GetService<DataContext>().Database.Migrate();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(opt =>
-                {
-                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                });
-            services.AddCors();
-
-            // Repositories
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IDatingRepository, DatingRepository>();
-            services.AddScoped<LogUserActivity>();
-
-            // JWT Token Authentication
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-
-            // Cloudinary
-            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
-        }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
-            // Add DbContext
-            services.AddAutoMapper();
-            services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddTransient<Seed>();
+            #region Identity
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(opt =>
-                {
-                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                });
-            services.AddCors();
+            IdentityBuilder builder = services.AddIdentityCore<User>(opt => {
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 4;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+            });
 
-            // Repositories
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IDatingRepository, DatingRepository>();
-            services.AddScoped<LogUserActivity>();
+            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+            builder.AddEntityFrameworkStores<DataContext>();
+            builder.AddRoleValidator<RoleValidator<Role>>();
+            builder.AddRoleManager<RoleManager<Role>>();
+            builder.AddSignInManager<SignInManager<User>>();
 
             // JWT Token Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -104,8 +67,48 @@ namespace Core.API
                 };
             });
 
+            #endregion
+
+            #region Data
+
+            // Add DbContext            
+            services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<Seed>();
+            // Repositories            
+            services.AddScoped<IDatingRepository, DatingRepository>();
+            services.AddScoped<LogUserActivity>();
+
+            #endregion
+
+            #region MVC
+
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(opt =>
+            {
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+                
+            #endregion
+
+            #region Varia
+
+            // AutoMapper
+            Mapper.Reset();
+            services.AddAutoMapper();
+
             // Cloudinary
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+
+            services.AddCors();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -136,7 +139,7 @@ namespace Core.API
             }
 
             // app.UseHttpsRedirection();
-            seeder.SeedUsers();
+            seeder.SeedDatabase();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseDefaultFiles();
