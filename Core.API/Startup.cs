@@ -25,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using static Core.API.Helpers.Constants;
 
 namespace Core.API
 {
@@ -67,6 +68,14 @@ namespace Core.API
                 };
             });
 
+            // Policies
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy(Policy.RequireAdmin, policy => policy.RequireRole(UserRoles.Admin));
+                options.AddPolicy(Policy.ModeratePhoto, policy => policy.RequireRole(UserRoles.Admin, UserRoles.Moderator));
+                options.AddPolicy(Policy.VipOnly, policy => policy.RequireRole(UserRoles.VIP));
+            });
+
             #endregion
 
             #region Data
@@ -76,6 +85,7 @@ namespace Core.API
             services.AddTransient<Seed>();
             // Repositories            
             services.AddScoped<IDatingRepository, DatingRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<LogUserActivity>();
 
             #endregion

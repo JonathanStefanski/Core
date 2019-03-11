@@ -29,5 +29,12 @@ namespace Core.API.Helpers
                 return roles;
             }
         }
+
+        public static class Policy
+        {
+            public const string RequireAdmin = "RequireAdminPolicy";
+            public const string ModeratePhoto = "ModeratePhotoPolicy";
+            public const string VipOnly = "VipOnlyPolicy";
+        }
     }
 }
