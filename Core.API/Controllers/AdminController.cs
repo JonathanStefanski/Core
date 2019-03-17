@@ -55,7 +55,7 @@ namespace Core.API.Controllers
         }
 
         [Authorize(Policy = Policy.ModeratePhoto)]
-        [HttpGet("photosForMOderation")]
+        [HttpGet("photosForModeration")]
         public async Task<IActionResult> GetPhotosForModeration()
         {
             return Ok("Only admins or moderators can see this");

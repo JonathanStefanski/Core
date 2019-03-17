@@ -8,6 +8,7 @@ using AutoMapper;
 using Core.API.Data;
 using Core.API.Helpers;
 using Core.API.Models;
+using Core.Game;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -117,6 +118,8 @@ namespace Core.API
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
 
             services.AddCors();
+
+            services.AddSingleton<IMaze, Maze>();
 
             #endregion
         }
